@@ -41,7 +41,7 @@
 
 ```bash
 # Repoyu klonlayın
-git clone https://github.com/muhammedsiracozer/dosya-analiz.git
+git clone https://github.com/msozz/Dosya-Analiz.git
 cd dosya-analiz
 
 # Bağımlılıkları yükleyin
