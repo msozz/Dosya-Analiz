@@ -112,6 +112,8 @@ python app.py
 
 ## 🌐 Web Arayüzü
 
+<img width="1099" height="1372" alt="127 0 0 1_5000_ (1)" src="https://github.com/user-attachments/assets/1ac083e7-ad88-4a2a-9373-a23dedcc3cd6" />
+
 Dosya Analiz, modern ve kullanıcı dostu bir web arayüzü ile birlikte gelir:
 
 ### Web Arayüzü Özellikleri
