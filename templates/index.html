@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📁 Dosya Analiz - Proje Klasör Analiz Aracı</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.2.0/github-markdown.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --error: #ef4444;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--text-primary);
+        }
+
+        .card h5, .card h6 {
+            color: var(--text-primary) !important;
+        }
+
+        .text-muted {
+            color: var(--text-secondary) !important;
+        }
+
+        .navbar {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.4rem;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1e1b4b 100%);
+            padding: 4rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236366f1' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .upload-zone:hover, .upload-zone.drag-over {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .upload-zone i {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-light {
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .btn-outline-light:hover {
+            background: var(--bg-card);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-icon.excel { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .feature-icon.word { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        .feature-icon.pdf { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .feature-icon.folder { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+
+        .library-status {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .library-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+        }
+
+        .library-badge.installed { border-color: var(--success); }
+        .library-badge.missing { border-color: var(--warning); }
+
+        .results-section {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        .result-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .result-header {
+            background: rgba(99, 102, 241, 0.1);
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-body {
+            padding: 1.5rem;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .markdown-body {
+            background: transparent !important;
+            color: var(--text-primary) !important;
+        }
+
+        .markdown-body table {
+            display: table;
+            width: 100%;
+        }
+
+        .markdown-body table th,
+        .markdown-body table td {
+            background: var(--bg-card) !important;
+            border-color: var(--border-color) !important;
+        }
+
+        .markdown-body code {
+            background: rgba(99, 102, 241, 0.2) !important;
+            color: var(--primary) !important;
+        }
+
+        .markdown-body pre {
+            background: var(--bg-dark) !important;
+            border: 1px solid var(--border-color);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border-color);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-card .label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .tabs-nav {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 8px;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        footer {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem 0;
+            margin-top: 4rem;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .path-input-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .input-group-dark .form-control {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .input-group-dark .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .hero p { font-size: 1rem; }
+            .upload-zone { padding: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-folder-fill text-primary"></i> Dosya Analiz
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <a href="https://github.com/muhammedsiracozer/dosya-analiz" target="_blank" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-github"></i> GitHub
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>📁 Dosya Analiz</h1>
+            <p>Proje klasörlerinizi analiz edin, Excel, Word ve PDF dosyalarınızın detaylı raporlarını oluşturun.</p>
+            
+            <div class="library-status">
+                {% for lib, installed in library_status.items() %}
+                <span class="library-badge {{ 'installed' if installed else 'missing' }}">
+                    <i class="bi {{ 'bi-check-circle-fill text-success' if installed else 'bi-exclamation-circle-fill text-warning' }}"></i>
+                    {{ lib }}
+                </span>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container py-5">
+        <div class="row g-4">
+            <!-- Upload Section -->
+            <div class="col-lg-8">
+                <div class="card p-4">
+                    <h4 class="mb-4"><i class="bi bi-cloud-upload text-primary"></i> Dosya Yükle</h4>
+                    
+                    <!-- Upload Zone -->
+                    <div class="upload-zone" id="uploadZone">
+                        <i class="bi bi-file-earmark-arrow-up"></i>
+                        <h5>Dosyalarınızı sürükleyin veya tıklayın</h5>
+                        <p class="text-muted mb-3">Excel, Word, PDF veya ZIP (klasör) dosyaları desteklenir</p>
+                        <input type="file" id="fileInput" class="d-none" accept=".xlsx,.xlsm,.xls,.docx,.pdf,.zip">
+                        <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                            <i class="bi bi-folder2-open text-white"></i> Dosya Seç
+                        </button>
+                    </div>
+
+                    <!-- Path Input -->
+                    <div class="path-input-section">
+                        <h6 class="mb-3"><i class="bi bi-folder text-primary"></i> Veya Klasör Seçin / Yolu Girin</h6>
+                        <input type="file" id="folderInput" class="d-none" webkitdirectory directory multiple>
+                        <div class="input-group input-group-dark">
+                            <button class="btn btn-outline-light" type="button" onclick="document.getElementById('folderInput').click()">
+                                <i class="bi bi-folder2-open text-white"></i> Klasör Seç
+                            </button>
+                            <input type="text" class="form-control" id="pathInput" placeholder="/path/to/your/project">
+                            <button class="btn btn-primary" onclick="analyzePath()">
+                                <i class="bi bi-search"></i> Analiz Et
+                            </button>
+                        </div>
+                        <small class="text-muted mt-2 d-block">Klasör seçin veya yerel sunucu için klasör yolunu girin.</small>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="results-section" id="resultsSection">
+                    <div class="result-card">
+                        <div class="result-header">
+                            <div>
+                                <h5 class="mb-0" id="resultTitle">Analiz Sonuçları</h5>
+                                <small class="text-muted" id="resultMeta"></small>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-light btn-sm" onclick="copyResults()">
+                                    <i class="bi bi-clipboard"></i> Kopyala
+                                </button>
+                                <button class="btn btn-outline-light btn-sm" onclick="downloadResults()">
+                                    <i class="bi bi-download"></i> İndir
+                                </button>
+                            </div>
+                        </div>
+                        <div class="result-body">
+                            <!-- Stats Grid -->
+                            <div class="stats-grid" id="statsGrid" style="display: none;">
+                                <div class="stat-card">
+                                    <div class="value" id="statFiles">0</div>
+                                    <div class="label">Dosya</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="value" id="statDirs">0</div>
+                                    <div class="label">Klasör</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="value" id="statSize">0</div>
+                                    <div class="label">Boyut</div>
+                                </div>
+                            </div>
+
+                            <!-- Tabs -->
+                            <div class="tabs-nav" id="tabsNav" style="display: none;"></div>
+
+                            <!-- Content -->
+                            <div class="markdown-body" id="resultContent"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading -->
+                <div class="loading" id="loadingSection">
+                    <div class="spinner mx-auto mb-3"></div>
+                    <p>Dosyalar analiz ediliyor...</p>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <div class="card p-4 mb-4">
+                    <h5 class="mb-3"><i class="bi bi-info-circle text-primary"></i> Özellikler</h5>
+                    
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="feature-icon excel me-3"><i class="bi bi-file-earmark-excel"></i></div>
+                        <div>
+                            <h6 class="mb-1">Excel Analizi</h6>
+                            <small class="text-muted">Sayfalar, formüller, bağımlılıklar, tablolar</small>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="feature-icon word me-3"><i class="bi bi-file-earmark-word"></i></div>
+                        <div>
+                            <h6 class="mb-1">Word Analizi</h6>
+                            <small class="text-muted">Başlıklar, tablolar, içerik özeti</small>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="feature-icon pdf me-3"><i class="bi bi-file-earmark-pdf"></i></div>
+                        <div>
+                            <h6 class="mb-1">PDF Analizi</h6>
+                            <small class="text-muted">Sayfalar, tablolar, metin çıkarma</small>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-start">
+                        <div class="feature-icon folder me-3"><i class="bi bi-folder"></i></div>
+                        <div>
+                            <h6 class="mb-1">Klasör Analizi</h6>
+                            <small class="text-muted">Yapı ağacı, istatistikler, raporlar</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card p-4">
+                    <h5 class="mb-3"><i class="bi bi-terminal text-primary"></i> Komut Satırı</h5>
+                    <p class="text-muted small">Komut satırından da kullanabilirsiniz:</p>
+                    <pre class="bg-dark p-3 rounded" style="font-size: 0.8rem; color: #e2e8f0;"><code style="color: #22c55e;">python dosya_analiz.py ./proje</code></pre>
+                    <a href="https://github.com/muhammedsiracozer/dosya-analiz" class="btn btn-outline-light btn-sm w-100 mt-2">
+                        <i class="bi bi-book"></i> Dökümantasyon
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p class="mb-0">
+                <i class="bi bi-code-slash"></i> 
+                <strong>Dosya Analiz</strong> - Proje Klasör Analiz Aracı
+            </p>
+            <small>MIT Lisansı altında açık kaynak</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        let currentResult = null;
+
+        // Upload Zone Events
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('drag-over');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('drag-over');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        uploadZone.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                handleFile(fileInput.files[0]);
+            }
+        });
+
+        // Klasör seçici event listener
+        const folderInput = document.getElementById('folderInput');
+        folderInput.addEventListener('change', async () => {
+            if (folderInput.files.length > 0) {
+                showLoading(true);
+                hideResults();
+                
+                const formData = new FormData();
+                const files = Array.from(folderInput.files);
+                
+                // Tüm dosyaları ekle (göreli yolları koru)
+                files.forEach(file => {
+                    formData.append('files', file, file.webkitRelativePath || file.name);
+                });
+                
+                // Klasör adını al
+                const folderName = files[0].webkitRelativePath.split('/')[0] || 'folder';
+                
+                try {
+                    const response = await fetch('/upload-folder-files', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        currentResult = result;
+                        displayResults(result, folderName);
+                    } else {
+                        showError(result.error || 'Bir hata oluştu');
+                    }
+                } catch (error) {
+                    showError('Bağlantı hatası: ' + error.message);
+                } finally {
+                    showLoading(false);
+                    folderInput.value = '';
+                }
+            }
+        });
+
+        async function handleFile(file) {
+            showLoading(true);
+            hideResults();
+
+            const formData = new FormData();
+            
+            if (file.name.toLowerCase().endsWith('.zip')) {
+                formData.append('folder', file);
+                await uploadAndAnalyze('/upload-folder', formData, file.name);
+            } else {
+                formData.append('file', file);
+                await uploadAndAnalyze('/upload', formData, file.name);
+            }
+        }
+
+        async function uploadAndAnalyze(endpoint, formData, filename) {
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    currentResult = result;
+                    displayResults(result, filename);
+                } else {
+                    showError(result.error || 'Bir hata oluştu');
+                }
+            } catch (error) {
+                showError('Bağlantı hatası: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function analyzePath() {
+            const pathInput = document.getElementById('pathInput');
+            const path = pathInput.value.trim();
+
+            if (!path) {
+                showError('Lütfen bir klasör yolu girin');
+                return;
+            }
+
+            showLoading(true);
+            hideResults();
+
+            try {
+                const response = await fetch('/analyze-path', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ path: path })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    currentResult = result;
+                    displayResults(result, path);
+                } else {
+                    showError(result.error || 'Bir hata oluştu');
+                }
+            } catch (error) {
+                showError('Bağlantı hatası: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function displayResults(result, filename) {
+            const resultsSection = document.getElementById('resultsSection');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultMeta = document.getElementById('resultMeta');
+            const resultContent = document.getElementById('resultContent');
+            const statsGrid = document.getElementById('statsGrid');
+            const tabsNav = document.getElementById('tabsNav');
+
+            resultTitle.textContent = result.name || filename;
+
+            // Folder analysis
+            if (result.stats) {
+                statsGrid.style.display = 'grid';
+                document.getElementById('statFiles').textContent = result.stats.total_files;
+                document.getElementById('statDirs').textContent = result.stats.total_dirs;
+                document.getElementById('statSize').textContent = result.stats.total_size;
+                resultMeta.textContent = `Analiz: ${new Date(result.timestamp).toLocaleString('tr-TR')}`;
+
+                // Tabs
+                if (result.folder_reports && result.folder_reports.length > 0) {
+                    tabsNav.style.display = 'flex';
+                    tabsNav.innerHTML = '';
+
+                    const mainTab = document.createElement('button');
+                    mainTab.className = 'tab-btn active';
+                    mainTab.textContent = '📁 Ana Klasör';
+                    mainTab.onclick = () => showTab('main');
+                    tabsNav.appendChild(mainTab);
+
+                    result.folder_reports.forEach((folder, index) => {
+                        const tab = document.createElement('button');
+                        tab.className = 'tab-btn';
+                        tab.textContent = `📂 ${folder.name}`;
+                        tab.onclick = () => showTab(index);
+                        tabsNav.appendChild(tab);
+                    });
+                }
+
+                resultContent.innerHTML = `
+                    <div class="tab-content active" id="tab-main">
+                        <h6>🌳 Klasör Yapısı</h6>
+                        <pre><code>${escapeHtml(result.tree)}</code></pre>
+                        <hr>
+                        ${marked.parse(result.main_report || '')}
+                    </div>
+                `;
+
+                if (result.folder_reports) {
+                    result.folder_reports.forEach((folder, index) => {
+                        resultContent.innerHTML += `
+                            <div class="tab-content" id="tab-${index}">
+                                ${marked.parse(folder.report || '')}
+                            </div>
+                        `;
+                    });
+                }
+            } else {
+                // Single file analysis
+                statsGrid.style.display = 'none';
+                tabsNav.style.display = 'none';
+                resultMeta.textContent = `${result.type || ''} • ${result.size || ''}`;
+                resultContent.innerHTML = marked.parse(result.analysis || 'Analiz sonucu yok');
+            }
+
+            resultsSection.classList.add('active');
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+
+            const targetId = tabId === 'main' ? 'tab-main' : `tab-${tabId}`;
+            document.getElementById(targetId).classList.add('active');
+
+            const buttons = document.querySelectorAll('.tab-btn');
+            const index = tabId === 'main' ? 0 : tabId + 1;
+            buttons[index].classList.add('active');
+        }
+
+        function showLoading(show) {
+            document.getElementById('loadingSection').classList.toggle('active', show);
+        }
+
+        function hideResults() {
+            document.getElementById('resultsSection').classList.remove('active');
+        }
+
+        function showError(message) {
+            alert('Hata: ' + message);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function copyResults() {
+            if (!currentResult) return;
+
+            let text = '';
+            if (currentResult.main_report) {
+                text = currentResult.main_report;
+            } else if (currentResult.analysis) {
+                text = currentResult.analysis;
+            }
+
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Sonuçlar panoya kopyalandı!');
+            });
+        }
+
+        function downloadResults() {
+            if (!currentResult) return;
+
+            let content = '';
+            let filename = 'analiz_raporu.md';
+
+            if (currentResult.main_report) {
+                content = `# ${currentResult.name || 'Proje'} Analiz Raporu\n\n`;
+                content += `## Klasör Yapısı\n\`\`\`\n${currentResult.tree}\n\`\`\`\n\n`;
+                content += currentResult.main_report;
+
+                if (currentResult.folder_reports) {
+                    currentResult.folder_reports.forEach(folder => {
+                        content += `\n\n---\n\n${folder.report}`;
+                    });
+                }
+
+                filename = `${currentResult.name || 'proje'}_analiz_raporu.md`;
+            } else if (currentResult.analysis) {
+                content = `# ${currentResult.filename || 'Dosya'} Analizi\n\n`;
+                content += `- **Boyut:** ${currentResult.size}\n`;
+                content += `- **Tür:** ${currentResult.type}\n\n`;
+                content += currentResult.analysis;
+
+                filename = `${currentResult.filename || 'dosya'}_analizi.md`;
+            }
+
+            const blob = new Blob([content], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

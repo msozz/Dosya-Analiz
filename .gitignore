@@ -1,0 +1,72 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+.env/
+.venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project specific
+_ANALIZ_RAPORLARI/
+_KLASOR_RAPORU.md
+PROJE_ANALIZ_RAPORU.md
+
+# Flask
+instance/
+.webassets-cache
+
+# Logs
+*.log
+logs/
+
+# Test
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+.nox/
+
+# Temp
+tmp/
+temp/
+*.tmp

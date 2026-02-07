@@ -1,0 +1,12 @@
+# Dosya Analiz - Python Bağımlılıkları
+# =====================================
+
+# Analiz Kütüphaneleri
+openpyxl>=3.1.0          # Excel .xlsx dosya analizi
+python-docx>=1.0.0       # Word .docx dosya analizi
+pdfplumber>=0.10.0       # PDF dosya analizi
+xlrd>=2.0.1              # Eski Excel .xls dosya analizi
+
+# Web Arayüzü
+Flask>=3.0.0             # Web framework
+Werkzeug>=3.0.0          # WSGI toolkit (Flask bağımlılığı)
